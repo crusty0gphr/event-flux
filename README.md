@@ -1,6 +1,6 @@
 # Event Flux
 
-A Go-based application that interacts with both **Cassandra** and **ScyllaDB** to manage event data, specifically related to `fraudnetic_events`. This system allows for querying, filtering, and retrieving event data, using **Fiber** for handling HTTP requests. Project supports both databases and makes it easy to switch between them.
+A Go-based application that interacts with both **Cassandra** and **ScyllaDB** to manage event data, specifically related to `events`. This system allows for querying, filtering, and retrieving event data, using **Fiber** for handling HTTP requests. Project supports both databases and makes it easy to switch between them.
 
 **DISCLAMER 1: I skipped unit testing for faster development process.**
 
