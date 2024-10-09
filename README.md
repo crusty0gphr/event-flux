@@ -53,7 +53,7 @@ The system can be configured using environment variables, defined in the `docker
 - **APP_HOST**: The host address where the app will run.
 - **APP_PORT**: The port on which the app will run.
 
-**DISCLAMER 2: This is a anti-pattern, ENVs should not be inside docker compose files.**
+**DISCLAMER 2: This is an anti-pattern, ENVs should never be stored inside docker compose files.**
 
 ## Cassandra vs ScyllaDB
 
