@@ -2,7 +2,7 @@
 
 A Go-based application that interacts with both **Cassandra** and **ScyllaDB** to manage event data, specifically related to `fraudnetic_events`. This system allows for querying, filtering, and retrieving event data, using **Fiber** for handling HTTP requests and **gRPC** for RPC-based communication. Event Flux supports both databases and makes it easy to switch between them.
 
-**DISCLAMER: I skipped unit testing for faster development process**
+**DISCLAMER 1: I skipped unit testing for faster development process.**
 
 ## Requirements
 - **Go** (version 1.22 or later)
@@ -52,6 +52,8 @@ The system can be configured using environment variables, defined in the `docker
 - **SCYLLA_HOST**: Hostname for ScyllaDB.
 - **APP_HOST**: The host address where the app will run.
 - **APP_PORT**: The port on which the app will run.
+
+**DISCLAMER 2: This is a anti-pattern, ENVs should not be inside docker compose files.**
 
 ## Cassandra vs ScyllaDB
 
