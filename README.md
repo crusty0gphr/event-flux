@@ -33,14 +33,12 @@ I provided a **Postman collection** that includes all the API endpoints you need
    Retrieve an event by its `id`.  
    Example:  
    `GET http://0.0.0.0:8080/events/9cab3f76-331e-11ef-ae33-0242ac150002`
-<br>
-<br>
+
 2. **GET `/events`**  
    Retrieve all events in the database.  
    Example:  
    `GET http://0.0.0.0:8080/events`
-<br>
-<br>
+
 3. **POST `/events/filter`**  
    Filter events based on specific parameters like `event_name`, and `created_at`.  
    Example:
