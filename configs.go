@@ -10,6 +10,7 @@ type Config struct {
 	Port          string
 	CassandraHost string
 	ScyllaHost    string
+	DbDriverType  string
 }
 
 func (c *Config) BuildAppHostUrl() string {
@@ -22,5 +23,6 @@ func LoadConfigs() *Config {
 		Port:          os.Getenv("APP_PORT"),
 		CassandraHost: os.Getenv("CASSANDRA_HOST"),
 		ScyllaHost:    os.Getenv("SCYLLA_HOST"),
+		DbDriverType:  os.Getenv("DB_DRIVER_TYPE"),
 	}
 }

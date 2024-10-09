@@ -7,9 +7,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/logger"
 
 	eventflux "github.com/event-flux"
-	"github.com/event-flux/db"
 	"github.com/event-flux/internal"
-	"github.com/event-flux/migrate"
 )
 
 func main() {
@@ -18,18 +16,12 @@ func main() {
 
 	configs := eventflux.LoadConfigs()
 
-	cassandraSession, err := db.NewCassandraSession(configs.CassandraHost)
+	repo, err := internal.BuildRepository(configs)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-
-	if err = migrate.CassandraMigrateUP(cassandraSession); err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	srv := internal.NewService(nil)
+	srv := internal.NewService(repo)
 	handler := internal.NewHandler(srv)
 
 	app.Get("/", handler.NotAllowed)

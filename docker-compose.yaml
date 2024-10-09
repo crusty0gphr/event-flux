@@ -5,30 +5,60 @@ services:
     ports:
       - "9042:9042"
     environment:
-      CASSANDRA_CLUSTER_NAME: "MyCluster"
+      CASSANDRA_CLUSTER_NAME: "cassandra-cluster"
       CASSANDRA_NUM_TOKENS: 256
       CASSANDRA_DC: "datacenter1"
       CASSANDRA_RACK: "rack1"
       CASSANDRA_SEEDS: "cassandra"
     networks:
       - app-network
+    volumes:
+      - ./data:/data
+      - ./scripts:/scripts
 
-#  scylla:
-#    image: scylladb/scylla:latest
-#    container_name: scylla
-#    ports:
-#      - "9142:9142"
-#    environment:
-#      SCYLLA_CLUSTER_NAME: "MyScyllaCluster"
-#      SCYLLA_NUM_TOKENS: 256
-#      SCYLLA_SEEDS: "scylla"
-#      SCYLLA_DC: "datacenter1"
-#      SCYLLA_RACK: "rack1"
+  cassandra-init:
+    image: cassandra:latest
+    container_name: cassandra-init
+    depends_on:
+      - cassandra
+    networks:
+      - app-network
+    volumes:
+      - ./data:/data
+      - ./scripts:/scripts
+#    entrypoint: [ "/bin/sh", "-c", "/scripts/wait-for-it.sh cassandra:9042 -- /scripts/load-data-cassandra.sh" ] # Wait for Cassandra and run the script
+    entrypoint: ["/bin/sh", "-c", "chmod +x /scripts/load-data-cassandra.sh /scripts/wait-for-it.sh && /scripts/wait-for-it.sh cassandra:9042 -- /scripts/load-data-cassandra.sh"]
+  scylla:
+    image: scylladb/scylla:latest
+    container_name: scylla
+    ports:
+      - "9050:9042"
+    environment:
+      SCYLLA_CLUSTER_NAME: "scylla-cluster"
+      SCYLLA_NUM_TOKENS: 256
+      SCYLLA_SEEDS: "scylla"
+      SCYLLA_DC: "datacenter1"
+      SCYLLA_RACK: "rack1"
+    networks:
+      - app-network
 
+  scylla-init:
+    image: scylladb/scylla:latest
+    container_name: scylla-init
+    depends_on:
+      - scylla
+    networks:
+      - app-network
+    volumes:
+      - ./data:/data
+      - ./scripts:/scripts
+#    entrypoint: [ "/bin/sh", "-c", "/scripts/wait-for-it.sh scylla:9050 -- /scripts/load-data-scylla.sh" ] # Wait for Scylla and run the script
+    entrypoint: ["/bin/sh", "-c", "chmod +x /scripts/load-data-scylla.sh /scripts/wait-for-it.sh && /scripts/wait-for-it.sh scylla:9050 -- /scripts/load-data-scylla.sh"]
   app:
     build: .
     container_name: eventflux
     environment:
+      DB_DRIVER_TYPE: cassandra # available types: cassandra | scylla
       CASSANDRA_HOST: cassandra
       SCYLLA_HOST: scylla
       APP_HOST: 0.0.0.0
@@ -37,9 +67,14 @@ services:
       - "8080:8080"
     depends_on:
       - cassandra
+      - cassandra-init
       - scylla
+      - scylla-init
     networks:
       - app-network
+    volumes:
+      - ./scripts:/scripts
+    command: ["/bin/sh", "-c", "/scripts/wait-for-it.sh cassandra:9042 -- /scripts/wait-for-it.sh scylla:9050 -- ./eventflux"]
 
 networks:
   app-network:

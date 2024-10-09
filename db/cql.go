@@ -7,7 +7,7 @@ import (
 	"github.com/gocql/gocql"
 )
 
-func NewCassandraSession(host string) (createSession *gocql.Session, err error) {
+func NewGOCQLSession(host string) (createSession *gocql.Session, err error) {
 	for retries := 0; retries < 5; retries++ {
 		cluster := gocql.NewCluster(host)
 		cluster.Consistency = gocql.Quorum
